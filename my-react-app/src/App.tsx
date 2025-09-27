@@ -1,5 +1,22 @@
 import React, { useState } from 'react';
 import { DollarSign, PlusCircle, Settings, BarChart3, Lightbulb, User } from 'lucide-react';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+
+function WrappedLegend({ payload = [] }: { payload?: any[] }) {
+  return (
+    <ul className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
+      {payload.map((entry) => (
+        <li key={entry.value} className="flex items-center gap-2 text-gray-700">
+          <span
+            className="inline-block h-3 w-3 rounded"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="text-sm">{entry.value}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 const FinanceApp = () => {
   const [monthlyIncome, setMonthlyIncome] = useState(5000);
@@ -73,6 +90,16 @@ const FinanceApp = () => {
       percentage: remainingForDisplay > 0 ? ((remainingForDisplay / baseForPercentage) * 100).toFixed(1) : '0.0' 
     }
   ];
+
+  // ---- Pie chart series (hide zeros; clamp negatives) ----
+const chartData = [
+  ...expenseData.map(d => ({ name: d.name, value: d.value, color: d.color })),
+  { name: 'Savings/Investing', value: Math.max(0, savingsInvesting), color: '#F7DC6F' },
+  { name: 'Remaining',         value: Math.max(0, remaining),        color: '#BB8FCE' },
+].filter(d => d.value > 0);
+
+const SLICE_COLORS = chartData.map(d => d.color);
+
 
   const [newCategory, setNewCategory] = useState('');
 
@@ -313,29 +340,35 @@ const FinanceApp = () => {
               </div>
             </div>
 
-            {/* Account Settings */}
+            {/* Spending Pie Chart */}
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                <Settings className="h-5 w-5 mr-2 text-gray-600" />
-                Account Settings
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                Spending Breakdown (Pie Chart)
               </h2>
-              <div className="space-y-3">
-                <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 flex items-center justify-between">
-                  <span>Profile Settings</span>
-                  <span className="text-gray-400">→</span>
-                </button>
-                <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 flex items-center justify-between">
-                  <span>Notification Preferences</span>
-                  <span className="text-gray-400">→</span>
-                </button>
-                <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 flex items-center justify-between">
-                  <span>Export Data</span>
-                  <span className="text-gray-400">→</span>
-                </button>
-                <button className="w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200 flex items-center justify-between">
-                  <span>Privacy Settings</span>
-                  <span className="text-gray-400">→</span>
-                </button>
+
+              <div className="h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={60}
+                      outerRadius={90}
+                      strokeWidth={2}
+                    >
+                      {chartData.map((entry, i) => (
+                        <Cell key={`slice-${i}`} fill={SLICE_COLORS[i] || '#8884d8'} />
+                      ))}
+                    </Pie>
+
+                    <Tooltip
+                      formatter={(val: number) => `$${val.toLocaleString()}`}
+                      contentStyle={{ borderRadius: 8 }}
+                    />
+                    <Legend content={<WrappedLegend/>} />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             </div>
 
