@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DollarSign, PlusCircle, Settings, BarChart3, Lightbulb, User } from 'lucide-react';
 
 const FinanceApp = () => {
+  const [darkMode, setDarkMode] = useState(false);
   const [monthlyIncome, setMonthlyIncome] = useState(5000);
   const [expenses, setExpenses] = useState<{ [key: string]: number }>({
     rent: 1300,
@@ -11,6 +12,15 @@ const FinanceApp = () => {
     insurance: 200
   });
   const [savingsInvesting, setSavingsInvesting] = useState(800);
+
+  // Apply dark mode class to document root
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   // Calculate totals
   const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + val, 0);
@@ -103,21 +113,39 @@ const FinanceApp = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}>
+    <div className={`min-h-screen transition-all duration-300 ${
+      darkMode 
+        ? 'bg-gradient-to-br from-gray-900 to-gray-800' 
+        : 'bg-gradient-to-br from-blue-50 to-indigo-100'
+    }`}>
       {/* Header */}
-      <header style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderBottom: '1px solid #e5e7eb' }}>
+      <header className={`transition-colors duration-300 shadow-lg ${
+        darkMode 
+          ? 'bg-gray-800 border-gray-700' 
+          : 'bg-white border-gray-200'
+      } border-b`}>
         <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '0 1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 0' }}>
             <div className="flex items-center space-x-3">
               <DollarSign className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">FinPlan</h1>
+              <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                FinMan
+              </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                <Settings className="h-5 w-5 text-gray-600" />
+              <button className={`p-2 rounded-lg transition-colors ${
+                darkMode 
+                  ? 'hover:bg-gray-700 text-gray-300' 
+                  : 'hover:bg-gray-100 text-gray-600'
+              }`}>
+                <Settings className="h-5 w-5" />
               </button>
-              <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                <User className="h-5 w-5 text-gray-600" />
+              <button className={`p-2 rounded-lg transition-colors ${
+                darkMode 
+                  ? 'hover:bg-gray-700 text-gray-300' 
+                  : 'hover:bg-gray-100 text-gray-600'
+              }`}>
+                <User className="h-5 w-5" />
               </button>
             </div>
           </div>
@@ -129,35 +157,51 @@ const FinanceApp = () => {
           
           {/* Left Column - User Input */}
           <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+            <div className={`rounded-xl shadow-lg p-6 transition-colors duration-300 ${
+              darkMode ? 'bg-gray-800' : 'bg-white'
+            }`}>
+              <h2 className={`text-xl font-semibold mb-6 flex items-center ${
+                darkMode ? 'text-white' : 'text-gray-800'
+              }`}>
                 <PlusCircle className="h-5 w-5 mr-2 text-blue-600" />
                 User Input
               </h2>
               
               {/* Monthly Income */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={`block text-sm font-medium mb-2 ${
+                  darkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
                   Monthly Income
                 </label>
                 <input
                   type="number"
                   value={monthlyIncome}
                   onChange={(e) => setMonthlyIncome(parseFloat(e.target.value) || 0)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    darkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                      : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'
+                  }`}
                   placeholder="Enter monthly income"
                 />
               </div>
 
               {/* Add New Category */}
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">Add New Category</h3>
+                <h3 className={`text-lg font-medium mb-4 ${
+                  darkMode ? 'text-white' : 'text-gray-800'
+                }`}>Add New Category</h3>
                 <div className="flex space-x-2">
                   <input
                     type="text"
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                      darkMode 
+                        ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                        : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'
+                    }`}
                     placeholder="Add new category (e.g., Gym, Pets)"
                   />
                   <button
@@ -171,24 +215,36 @@ const FinanceApp = () => {
 
               {/* Recurring Expenses */}
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-800 mb-4">Recurring Expenses</h3>
+                <h3 className={`text-lg font-medium mb-4 ${
+                  darkMode ? 'text-white' : 'text-gray-800'
+                }`}>Recurring Expenses</h3>
                 <div className="space-y-3">
                   {Object.entries(expenses).map(([key, value]) => (
                     <div key={key} className="flex items-center space-x-2">
                       <div className="flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1 capitalize">
+                        <label className={`block text-sm font-medium mb-1 capitalize ${
+                          darkMode ? 'text-gray-300' : 'text-gray-600'
+                        }`}>
                           {key === 'subs' ? 'Subscriptions' : key}
                         </label>
                         <input
                           type="number"
                           value={value}
                           onChange={(e) => updateExpense(key, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                            darkMode 
+                              ? 'bg-gray-700 border-gray-600 text-white' 
+                              : 'bg-white border-gray-200 text-gray-900'
+                          }`}
                         />
                       </div>
                       <button
                         onClick={() => removeCategory(key)}
-                        className="mt-6 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                        className={`mt-6 p-2 rounded-lg transition-colors ${
+                          darkMode 
+                            ? 'text-red-400 hover:text-red-300 hover:bg-red-900' 
+                            : 'text-red-500 hover:text-red-700 hover:bg-red-50'
+                        }`}
                         title="Remove category"
                       >
                         ×
@@ -200,14 +256,20 @@ const FinanceApp = () => {
 
               {/* Savings/Investing */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={`block text-sm font-medium mb-2 ${
+                  darkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
                   Savings/Investing
                 </label>
                 <input
                   type="number"
                   value={savingsInvesting}
                   onChange={(e) => setSavingsInvesting(parseFloat(e.target.value) || 0)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+                    darkMode 
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' 
+                      : 'bg-white border-gray-200 text-gray-900 placeholder-gray-500'
+                  }`}
                   placeholder="Enter savings amount"
                 />
               </div>
@@ -217,8 +279,12 @@ const FinanceApp = () => {
           {/* Middle Column - Visualizations */}
           <div className="space-y-6">
             {/* Category Breakdown (without chart library) */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <div className={`rounded-xl shadow-lg p-6 transition-colors duration-300 ${
+              darkMode ? 'bg-gray-800' : 'bg-white'
+            }`}>
+              <h2 className={`text-xl font-semibold mb-4 flex items-center ${
+                darkMode ? 'text-white' : 'text-gray-800'
+              }`}>
                 <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
                 Category Breakdown
               </h2>
@@ -233,14 +299,22 @@ const FinanceApp = () => {
                           className="w-4 h-4 rounded-full mr-3" 
                           style={{ backgroundColor: item.color }}
                         ></div>
-                        <span className="font-medium text-gray-700">{item.name}</span>
+                        <span className={`font-medium ${
+                          darkMode ? 'text-gray-300' : 'text-gray-700'
+                        }`}>{item.name}</span>
                       </div>
                       <div className="text-right">
-                        <span className="font-bold text-gray-900">${item.value.toLocaleString()}</span>
-                        <div className="text-sm text-gray-500">{item.percentage}%</div>
+                        <span className={`font-bold ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>${item.value.toLocaleString()}</span>
+                        <div className={`text-sm ${
+                          darkMode ? 'text-gray-400' : 'text-gray-500'
+                        }`}>{item.percentage}%</div>
                       </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className={`w-full rounded-full h-2 ${
+                      darkMode ? 'bg-gray-700' : 'bg-gray-200'
+                    }`}>
                       <div 
                         className="h-2 rounded-full transition-all duration-300"
                         style={{ 
@@ -255,29 +329,53 @@ const FinanceApp = () => {
             </div>
 
             {/* Budget Summary */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Budget Summary</h2>
+            <div className={`rounded-xl shadow-lg p-6 transition-colors duration-300 ${
+              darkMode ? 'bg-gray-800' : 'bg-white'
+            }`}>
+              <h2 className={`text-xl font-semibold mb-4 ${
+                darkMode ? 'text-white' : 'text-gray-800'
+              }`}>Budget Summary</h2>
               <div className="space-y-4">
                 <div className={`flex justify-between items-center p-4 rounded-lg border-l-4 ${
-                  remaining >= 0 ? 'bg-green-50 border-green-400' : 'bg-red-50 border-red-400'
+                  remaining >= 0 
+                    ? darkMode 
+                      ? 'bg-green-900 border-green-400' 
+                      : 'bg-green-50 border-green-400'
+                    : darkMode 
+                      ? 'bg-red-900 border-red-400' 
+                      : 'bg-red-50 border-red-400'
                 }`}>
-                  <span className="font-medium text-gray-700">Budget Remaining</span>
+                  <span className={`font-medium ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Budget Remaining</span>
                   <span className={`font-bold text-xl ${
                     remaining >= 0 ? 'text-green-600' : 'text-red-600'
                   }`}>
                     ${remaining.toLocaleString()}
                   </span>
                 </div>
-                <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-                  <span className="font-medium text-gray-700">Non-recurring Budget</span>
+                <div className={`flex justify-between items-center p-4 rounded-lg border-l-4 border-blue-400 ${
+                  darkMode ? 'bg-blue-900' : 'bg-blue-50'
+                }`}>
+                  <span className={`font-medium ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Non-recurring Budget</span>
                   <span className="font-bold text-blue-600 text-xl">${nonRecurringBudget.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400">
-                  <span className="font-medium text-gray-700">Total Monthly Expenses</span>
+                <div className={`flex justify-between items-center p-4 rounded-lg border-l-4 border-purple-400 ${
+                  darkMode ? 'bg-purple-900' : 'bg-purple-50'
+                }`}>
+                  <span className={`font-medium ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Total Monthly Expenses</span>
                   <span className="font-bold text-purple-600 text-xl">${totalExpenses.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center p-4 bg-gray-50 rounded-lg border-l-4 border-gray-400">
-                  <span className="font-medium text-gray-700">Monthly Status</span>
+                <div className={`flex justify-between items-center p-4 rounded-lg border-l-4 border-gray-400 ${
+                  darkMode ? 'bg-gray-700' : 'bg-gray-50'
+                }`}>
+                  <span className={`font-medium ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>Monthly Status</span>
                   <span className={`font-bold text-xl ${remaining >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {remaining >= 0 ? 'On Track' : 'Over Budget'}
                   </span>
@@ -289,30 +387,50 @@ const FinanceApp = () => {
           {/* Right Column - Insights & Settings */}
           <div className="space-y-6">
             {/* AI Insights */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <div className={`rounded-xl shadow-lg p-6 transition-colors duration-300 ${
+              darkMode ? 'bg-gray-800' : 'bg-white'
+            }`}>
+              <h2 className={`text-xl font-semibold mb-4 flex items-center ${
+                darkMode ? 'text-white' : 'text-gray-800'
+              }`}>
                 <Lightbulb className="h-5 w-5 mr-2 text-yellow-500" />
                 Insights/Recommendations
               </h2>
               <div className="space-y-4">
-                <div className="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
-                  <p className="text-sm text-gray-700">
+                <div className={`p-4 border-l-4 border-yellow-400 rounded-r-lg ${
+                  darkMode ? 'bg-yellow-900' : 'bg-yellow-50'
+                }`}>
+                  <p className={`text-sm ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                     <strong>Savings Rate:</strong> You're saving {((savingsInvesting / monthlyIncome) * 100).toFixed(1)}% of your income. {savingsInvesting / monthlyIncome >= 0.2 ? 'Great job!' : 'Consider increasing to 20% if possible.'}
                   </p>
                 </div>
-                <div className="p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-                  <p className="text-sm text-gray-700">
+                <div className={`p-4 border-l-4 border-blue-400 rounded-r-lg ${
+                  darkMode ? 'bg-blue-900' : 'bg-blue-50'
+                }`}>
+                  <p className={`text-sm ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                     <strong>Housing Cost:</strong> Your rent is {((expenses.rent / monthlyIncome) * 100).toFixed(1)}% of income. {expenses.rent / monthlyIncome <= 0.3 ? 'This is within the recommended 30% rule.' : 'Consider reducing housing costs - aim for 30% or less.'}
                   </p>
                 </div>
-                <div className="p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
-                  <p className="text-sm text-gray-700">
+                <div className={`p-4 border-l-4 border-green-400 rounded-r-lg ${
+                  darkMode ? 'bg-green-900' : 'bg-green-50'
+                }`}>
+                  <p className={`text-sm ${
+                    darkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                     <strong>Emergency Fund:</strong> Aim to save 3-6 months of expenses (${(totalExpenses * 3).toLocaleString()} - ${(totalExpenses * 6).toLocaleString()}).
                   </p>
                 </div>
                 {remaining < 0 && (
-                  <div className="p-4 bg-red-50 border-l-4 border-red-400 rounded-r-lg">
-                    <p className="text-sm text-gray-700">
+                  <div className={`p-4 border-l-4 border-red-400 rounded-r-lg ${
+                    darkMode ? 'bg-red-900' : 'bg-red-50'
+                  }`}>
+                    <p className={`text-sm ${
+                      darkMode ? 'text-gray-300' : 'text-gray-700'
+                    }`}>
                       <strong>Budget Alert:</strong> You're ${Math.abs(remaining).toLocaleString()} over budget. Consider reducing expenses or increasing income.
                     </p>
                   </div>
@@ -321,8 +439,12 @@ const FinanceApp = () => {
             </div>
 
             {/* Spending Pie Chart - Pure CSS Version */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            <div className={`rounded-xl shadow-lg p-6 transition-colors duration-300 ${
+              darkMode ? 'bg-gray-800' : 'bg-white'
+            }`}>
+              <h2 className={`text-xl font-semibold mb-4 ${
+                darkMode ? 'text-white' : 'text-gray-800'
+              }`}>
                 Spending Breakdown (Pie Chart)
               </h2>
 
@@ -364,10 +486,14 @@ const FinanceApp = () => {
                       {/* Center text */}
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-gray-900">
+                          <div className={`text-2xl font-bold ${
+                            darkMode ? 'text-white' : 'text-gray-900'
+                          }`}>
                             ${chartData.reduce((sum, item) => sum + item.value, 0).toLocaleString()}
                           </div>
-                          <div className="text-sm text-gray-600">Total</div>
+                          <div className={`text-sm ${
+                            darkMode ? 'text-gray-400' : 'text-gray-600'
+                          }`}>Total</div>
                         </div>
                       </div>
                     </div>
@@ -385,7 +511,9 @@ const FinanceApp = () => {
                             className="inline-block w-3 h-3 rounded-full"
                             style={{ backgroundColor: entry.color }}
                           />
-                          <span className="text-gray-700 truncate">
+                          <span className={`truncate ${
+                            darkMode ? 'text-gray-300' : 'text-gray-700'
+                          }`}>
                             {entry.name}: ${entry.value.toLocaleString()} ({percentage}%)
                           </span>
                         </div>
@@ -394,18 +522,46 @@ const FinanceApp = () => {
                   </div>
                 </>
               ) : (
-                <div className="h-48 flex items-center justify-center text-gray-500">
+                <div className={`h-48 flex items-center justify-center ${
+                  darkMode ? 'text-gray-400' : 'text-gray-500'
+                }`}>
                   No data to display
                 </div>
               )}
             </div>
 
-            {/* Toggle Dark Mode Placeholder */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
+            {/* Working Dark Mode Toggle */}
+            <div className={`rounded-xl shadow-lg p-6 transition-colors duration-300 ${
+              darkMode ? 'bg-gray-800' : 'bg-white'
+            }`}>
               <div className="flex items-center justify-between">
-                <span className="font-medium text-gray-700">Dark Mode</span>
-                <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                  <span className="inline-block h-4 w-4 transform rounded-full bg-white shadow-lg ring-0 transition-transform translate-x-1" />
+                <div>
+                  <span className={`font-medium text-lg ${
+                    darkMode ? 'text-white' : 'text-gray-700'
+                  }`}>Dark Mode</span>
+                  <p className={`text-sm mt-1 ${
+                    darkMode ? 'text-gray-400' : 'text-gray-600'
+                  }`}>
+                    Toggle between light and dark themes
+                  </p>
+                </div>
+                
+                <button
+                  onClick={() => setDarkMode(!darkMode)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                    darkMode 
+                      ? 'bg-blue-600 focus:ring-blue-500' 
+                      : 'bg-gray-300 focus:ring-gray-400'
+                  } ${
+                    darkMode ? 'focus:ring-offset-gray-800' : 'focus:ring-offset-white'
+                  }`}
+                >
+                  <span className="sr-only">Toggle dark mode</span>
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ${
+                      darkMode ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
                 </button>
               </div>
             </div>
