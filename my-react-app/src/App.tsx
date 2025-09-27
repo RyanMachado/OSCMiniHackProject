@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { DollarSign, PlusCircle, Settings, BarChart3, Lightbulb, User } from 'lucide-react';
 
+const MAX_MONTHLY_INCOME = 1000000000000;
+const MIN_MONTHLY_INCOME = 0;
 const FinanceApp = () => {
   const [monthlyIncome, setMonthlyIncome] = useState(5000);
   const [expenses, setExpenses] = useState({
@@ -17,7 +19,9 @@ const FinanceApp = () => {
   const remaining = monthlyIncome - totalExpenses - savingsInvesting;
   const nonRecurringBudget = 800;
 
+
   // Data for visualization - show remaining as 0 if negative
+       
   const pieData = [
     { name: 'Rent', value: expenses.rent, color: '#FF6B6B', percentage: ((expenses.rent / monthlyIncome) * 100).toFixed(1) },
     { name: 'Food', value: expenses.food, color: '#4ECDC4', percentage: ((expenses.food / monthlyIncome) * 100).toFixed(1) },
@@ -73,7 +77,12 @@ const FinanceApp = () => {
                 <input
                   type="number"
                   value={monthlyIncome}
-                  onChange={(e) => setMonthlyIncome(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => {
+                    const raw = parseFloat(e.target.value) || 0;
+                    const clamped = Math.min(MAX_MONTHLY_INCOME, Math.max(MIN_MONTHLY_INCOME, raw));
+                    setMonthlyIncome(clamped);
+                  }}
+                  
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter monthly income"
                 />
