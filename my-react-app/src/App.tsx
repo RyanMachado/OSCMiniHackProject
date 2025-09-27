@@ -1,22 +1,5 @@
 import React, { useState } from 'react';
 import { DollarSign, PlusCircle, Settings, BarChart3, Lightbulb, User } from 'lucide-react';
-import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-
-function WrappedLegend({ payload = [] }: { payload?: any[] }) {
-  return (
-    <ul className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
-      {payload.map((entry) => (
-        <li key={entry.value} className="flex items-center gap-2 text-gray-700">
-          <span
-            className="inline-block h-3 w-3 rounded"
-            style={{ backgroundColor: entry.color }}
-          />
-          <span className="text-sm">{entry.value}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 const FinanceApp = () => {
   const [monthlyIncome, setMonthlyIncome] = useState(5000);
@@ -92,14 +75,11 @@ const FinanceApp = () => {
   ];
 
   // ---- Pie chart series (hide zeros; clamp negatives) ----
-const chartData = [
-  ...expenseData.map(d => ({ name: d.name, value: d.value, color: d.color })),
-  { name: 'Savings/Investing', value: Math.max(0, savingsInvesting), color: '#F7DC6F' },
-  { name: 'Remaining',         value: Math.max(0, remaining),        color: '#BB8FCE' },
-].filter(d => d.value > 0);
-
-const SLICE_COLORS = chartData.map(d => d.color);
-
+  const chartData = [
+    ...expenseData.map(d => ({ name: d.name, value: d.value, color: d.color })),
+    { name: 'Savings/Investing', value: Math.max(0, savingsInvesting), color: '#F7DC6F' },
+    { name: 'Remaining',         value: Math.max(0, remaining),        color: '#BB8FCE' },
+  ].filter(d => d.value > 0);
 
   const [newCategory, setNewCategory] = useState('');
 
@@ -340,36 +320,84 @@ const SLICE_COLORS = chartData.map(d => d.color);
               </div>
             </div>
 
-            {/* Spending Pie Chart */}
+            {/* Spending Pie Chart - Pure CSS Version */}
             <div className="bg-white rounded-xl shadow-lg p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Spending Breakdown (Pie Chart)
               </h2>
 
-              <div className="h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={chartData}
-                      dataKey="value"
-                      nameKey="name"
-                      innerRadius={60}
-                      outerRadius={90}
-                      strokeWidth={2}
-                    >
-                      {chartData.map((entry, i) => (
-                        <Cell key={`slice-${i}`} fill={SLICE_COLORS[i] || '#8884d8'} />
-                      ))}
-                    </Pie>
+              {chartData.length > 0 ? (
+                <>
+                  {/* CSS-only Pie Chart */}
+                  <div className="flex justify-center mb-6">
+                    <div className="relative w-48 h-48">
+                      <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
+                        {(() => {
+                          let cumulativePercentage = 0;
+                          const totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+                          
+                          return chartData.map((item, index) => {
+                            const percentage = (item.value / totalValue) * 100;
+                            const strokeDasharray = `${percentage} ${100 - percentage}`;
+                            const strokeDashoffset = -cumulativePercentage;
+                            
+                            const element = (
+                              <circle
+                                key={index}
+                                cx="50"
+                                cy="50"
+                                r="15.915494309"
+                                fill="transparent"
+                                stroke={item.color}
+                                strokeWidth="31.830988618"
+                                strokeDasharray={strokeDasharray}
+                                strokeDashoffset={strokeDashoffset}
+                              />
+                            );
+                            
+                            cumulativePercentage += percentage;
+                            return element;
+                          });
+                        })()}
+                      </svg>
+                      
+                      {/* Center text */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-gray-900">
+                            ${chartData.reduce((sum, item) => sum + item.value, 0).toLocaleString()}
+                          </div>
+                          <div className="text-sm text-gray-600">Total</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-                    <Tooltip
-                      formatter={(val: number) => `$${val.toLocaleString()}`}
-                      contentStyle={{ borderRadius: 8 }}
-                    />
-                    <Legend content={<WrappedLegend/>} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
+                  {/* Legend */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {chartData.map((entry, index) => {
+                      const totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+                      const percentage = ((entry.value / totalValue) * 100).toFixed(1);
+                      
+                      return (
+                        <div key={`legend-${index}`} className="flex items-center gap-2 text-sm">
+                          <span
+                            className="inline-block w-3 h-3 rounded-full"
+                            style={{ backgroundColor: entry.color }}
+                          />
+                          <span className="text-gray-700 truncate">
+                            {entry.name}: ${entry.value.toLocaleString()} ({percentage}%)
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className="h-48 flex items-center justify-center text-gray-500">
+                  No data to display
+                </div>
+              )}
             </div>
 
             {/* Toggle Dark Mode Placeholder */}
