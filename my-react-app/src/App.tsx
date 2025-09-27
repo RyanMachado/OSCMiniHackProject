@@ -55,6 +55,23 @@ const pieData = [
   },
 ];
 
+  // Calculate totals
+  const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + val, 0);
+  const remaining = monthlyIncome - totalExpenses - savingsInvesting;
+  const nonRecurringBudget = 800;
+
+
+  // Data for visualization - show remaining as 0 if negative
+       
+  const pieData = [
+    { name: 'Rent', value: expenses.rent, color: '#FF6B6B', percentage: ((expenses.rent / monthlyIncome) * 100).toFixed(1) },
+    { name: 'Food', value: expenses.food, color: '#4ECDC4', percentage: ((expenses.food / monthlyIncome) * 100).toFixed(1) },
+    { name: 'Car', value: expenses.car, color: '#45B7D1', percentage: ((expenses.car / monthlyIncome) * 100).toFixed(1) },
+    { name: 'Subscriptions', value: expenses.subs, color: '#FFA07A', percentage: ((expenses.subs / monthlyIncome) * 100).toFixed(1) },
+    { name: 'Insurance', value: expenses.insurance, color: '#98D8C8', percentage: ((expenses.insurance / monthlyIncome) * 100).toFixed(1) },
+    { name: 'Savings/Investing', value: savingsInvesting, color: '#F7DC6F', percentage: ((savingsInvesting / monthlyIncome) * 100).toFixed(1) },
+    { name: 'Remaining', value: Math.max(0, remaining), color: '#BB8FCE', percentage: Math.max(0, ((remaining / monthlyIncome) * 100)).toFixed(1) }
+  ];
 
   // after: const [monthlyIncome, ...], const [categories, ...], const [savingsInvesting, ...]
 
@@ -105,11 +122,11 @@ function AddCategoryRow({ onAdd }: { onAdd: (name: string) => void }) {
 }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}>
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
+      <header style={{ backgroundColor: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', borderBottom: '1px solid #e5e7eb' }}>
+        <div style={{ maxWidth: '80rem', margin: '0 auto', padding: '0 1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 0' }}>
             <div className="flex items-center space-x-3">
               <DollarSign className="h-8 w-8 text-blue-600" />
               <h1 className="text-2xl font-bold text-gray-900">FinPlan</h1>
