@@ -39,6 +39,7 @@ const expenseBreakdown = categories
     percentage: monthlyIncome > 0 ? ((c.amount / monthlyIncome) * 100).toFixed(1) : '0.0',
   }));
 
+// Compose the data the UI renders
 const pieData = [
   ...expenseBreakdown,
   {
@@ -55,23 +56,6 @@ const pieData = [
   },
 ];
 
-  // Calculate totals
-  const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + val, 0);
-  const remaining = monthlyIncome - totalExpenses - savingsInvesting;
-  const nonRecurringBudget = 800;
-
-
-  // Data for visualization - show remaining as 0 if negative
-       
-  const pieData = [
-    { name: 'Rent', value: expenses.rent, color: '#FF6B6B', percentage: ((expenses.rent / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Food', value: expenses.food, color: '#4ECDC4', percentage: ((expenses.food / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Car', value: expenses.car, color: '#45B7D1', percentage: ((expenses.car / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Subscriptions', value: expenses.subs, color: '#FFA07A', percentage: ((expenses.subs / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Insurance', value: expenses.insurance, color: '#98D8C8', percentage: ((expenses.insurance / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Savings/Investing', value: savingsInvesting, color: '#F7DC6F', percentage: ((savingsInvesting / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Remaining', value: Math.max(0, remaining), color: '#BB8FCE', percentage: Math.max(0, ((remaining / monthlyIncome) * 100)).toFixed(1) }
-  ];
 
   // after: const [monthlyIncome, ...], const [categories, ...], const [savingsInvesting, ...]
 
