@@ -5,36 +5,105 @@ const MAX_MONTHLY_INCOME = 1000000000000;
 const MIN_MONTHLY_INCOME = 0;
 const FinanceApp = () => {
   const [monthlyIncome, setMonthlyIncome] = useState(5000);
-  const [expenses, setExpenses] = useState({
-    rent: 1300,
-    food: 520,
-    car: 400,
-    subs: 150,
-    insurance: 200
-  });
+  type Category = { id: string; name: string; amount: number; color: string };
+
+const palette = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+  '#F7DC6F', '#BB8FCE', '#7FB3D5', '#73C6B6', '#F5B7B1'
+];
+const pickColor = (i: number) => palette[i % palette.length];
+const uid = () => Math.random().toString(36).slice(2, 9);
+
+const [categories, setCategories] = useState<Category[]>([
+  { id: uid(), name: 'Rent',          amount: 1300, color: pickColor(0) },
+  { id: uid(), name: 'Food',          amount: 520,  color: pickColor(1) },
+  { id: uid(), name: 'Car',           amount: 400,  color: pickColor(2) },
+  { id: uid(), name: 'Subscriptions', amount: 150,  color: pickColor(3) },
+  { id: uid(), name: 'Insurance',     amount: 200,  color: pickColor(4) },
+]);
+
   const [savingsInvesting, setSavingsInvesting] = useState(800);
 
-  // Calculate totals
-  const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + val, 0);
-  const remaining = monthlyIncome - totalExpenses - savingsInvesting;
-  const nonRecurringBudget = 800;
+  // Calculate totals using the dynamic categories list
+const totalExpenses = categories.reduce((sum, c) => sum + c.amount, 0);
+const remaining = monthlyIncome - totalExpenses - savingsInvesting;
+const nonRecurringBudget = 800;
+
+// Build breakdown rows (hide zero-amount categories)
+const expenseBreakdown = categories
+  .filter(c => c.amount > 0)
+  .map(c => ({
+    name: c.name,
+    value: c.amount,
+    color: c.color,
+    percentage: monthlyIncome > 0 ? ((c.amount / monthlyIncome) * 100).toFixed(1) : '0.0',
+  }));
+
+// Compose the data the UI renders
+const pieData = [
+  ...expenseBreakdown,
+  {
+    name: 'Savings/Investing',
+    value: savingsInvesting,
+    color: '#F7DC6F',
+    percentage: monthlyIncome > 0 ? ((savingsInvesting / monthlyIncome) * 100).toFixed(1) : '0.0',
+  },
+  {
+    name: 'Remaining',
+    value: remaining,
+    color: '#BB8FCE',
+    percentage: monthlyIncome > 0 ? ((remaining / monthlyIncome) * 100).toFixed(1) : '0.0',
+  },
+];
 
 
-  // Data for visualization - show remaining as 0 if negative
-       
-  const pieData = [
-    { name: 'Rent', value: expenses.rent, color: '#FF6B6B', percentage: ((expenses.rent / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Food', value: expenses.food, color: '#4ECDC4', percentage: ((expenses.food / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Car', value: expenses.car, color: '#45B7D1', percentage: ((expenses.car / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Subscriptions', value: expenses.subs, color: '#FFA07A', percentage: ((expenses.subs / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Insurance', value: expenses.insurance, color: '#98D8C8', percentage: ((expenses.insurance / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Savings/Investing', value: savingsInvesting, color: '#F7DC6F', percentage: ((savingsInvesting / monthlyIncome) * 100).toFixed(1) },
-    { name: 'Remaining', value: Math.max(0, remaining), color: '#BB8FCE', percentage: Math.max(0, ((remaining / monthlyIncome) * 100)).toFixed(1) }
-  ];
+  // after: const [monthlyIncome, ...], const [categories, ...], const [savingsInvesting, ...]
 
-  const updateExpense = (category: string, value: string) => {
-    setExpenses(prev => ({ ...prev, [category]: parseFloat(value) || 0 }));
-  };
+const addCategory = (name: string, initialAmount = 0) => {
+  const clean = name.trim();
+  if (!clean) return;
+  if (categories.some(c => c.name.toLowerCase() === clean.toLowerCase())) return;
+  setCategories(prev => [...prev, {
+    id: Math.random().toString(36).slice(2, 9),
+    name: clean,
+    amount: Math.max(0, initialAmount),
+    color: ['#FF6B6B','#4ECDC4','#45B7D1','#FFA07A','#98D8C8','#F7DC6F','#BB8FCE','#7FB3D5','#73C6B6','#F5B7B1'][prev.length % 10],
+  }]);
+};
+
+const updateCategoryAmount = (id: string, value: string) => {
+  const amt = parseFloat(value) || 0;
+  setCategories(prev => prev.map(c => c.id === id ? { ...c, amount: amt } : c));
+};
+
+const removeCategory = (id: string) => {
+  setCategories(prev => prev.filter(c => c.id !== id));
+};
+
+// for insights lookups like "Rent"
+const getAmt = (name: string) =>
+  categories.find(c => c.name.toLowerCase() === name.toLowerCase())?.amount ?? 0;
+
+function AddCategoryRow({ onAdd }: { onAdd: (name: string) => void }) {
+  const [name, setName] = useState('');
+  return (
+    <div className="flex items-center gap-3">
+      <input
+        placeholder="Add new category (e.g., Gym, Pets)"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      />
+      <button
+        type="button"
+        onClick={() => { onAdd(name); setName(''); }}
+        className="px-3 py-2 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+      >
+        Add
+      </button>
+    </div>
+  );
+}
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)' }}>
@@ -92,19 +161,32 @@ const FinanceApp = () => {
               <div className="mb-6">
                 <h3 className="text-lg font-medium text-gray-800 mb-4">Recurring Expenses</h3>
                 <div className="space-y-3">
-                  {Object.entries(expenses).map(([key, value]) => (
-                    <div key={key}>
-                      <label className="block text-sm font-medium text-gray-600 mb-1 capitalize">
-                        {key === 'subs' ? 'Subscriptions' : key}
-                      </label>
-                      <input
-                        type="number"
-                        value={value}
-                        onChange={(e) => updateExpense(key, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-                  ))}
+                  {/* Add new category */}
+                  <AddCategoryRow onAdd={(name) => addCategory(name)} />
+
+                  <div className="space-y-3 mt-4">
+                    {categories.map((cat) => (
+                      <div key={cat.id} className="flex items-center gap-3">
+                        <label className="block text-sm font-medium text-gray-600 w-36">
+                          {cat.name}
+                        </label>
+                        <input
+                          type="number"
+                          value={cat.amount}
+                          onChange={(e) => updateCategoryAmount(cat.id, e.target.value)}
+                          className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeCategory(cat.id)}
+                          className="text-gray-400 hover:text-red-600 text-lg font-bold"
+                          aria-label={`Remove ${cat.name}`}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -206,7 +288,7 @@ const FinanceApp = () => {
                 </div>
                 <div className="p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
                   <p className="text-sm text-gray-700">
-                    <strong>Housing Cost:</strong> Your rent is {((expenses.rent / monthlyIncome) * 100).toFixed(1)}% of income. {expenses.rent / monthlyIncome <= 0.3 ? 'This is within the recommended 30% rule.' : 'Consider reducing housing costs - aim for 30% or less.'}
+                    <strong>Housing Cost:</strong> Your rent is {((getAmt('Rent') / monthlyIncome) * 100 || 0).toFixed(1)}% of income. {getAmt('Rent') / monthlyIncome <= 0.3 ? 'This is within the recommended 30% rule.' : 'Consider reducing housing costs - aim for 30% or less.'}
                   </p>
                 </div>
                 <div className="p-4 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
