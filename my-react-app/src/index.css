@@ -1,3 +1,252 @@
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
+/* Light vs Dark Theme */
+.app.light {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+  color: #111;
+}
+
+.app.dark {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #f1f5f9;
+}
+
+/* Header */
+.header {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.app.dark .header {
+  background: #1f2937;
+  border-bottom: 1px solid #334155;
+}
+.header-inner {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.app.dark .card {
+  background: #1f2937;
+  color: #f1f5f9;
+  border: 1px solid #334155;
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+}
+.icon-btn {
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+.icon-btn:hover {
+  background: #f1f5f9;
+}
+.app.dark .icon-btn:hover {
+  background: #334155;
+}
+
+.settings-btn {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: transparent;
+}
+.settings-btn:hover {
+  background: #f9fafb;
+}
+.app.dark .settings-btn {
+  border: 1px solid #334155;
+}
+.app.dark .settings-btn:hover {
+  background: #374151;
+}
+
+/* Budget Summary boxes */
+.summary-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+.summary-box .value {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+.summary-box.green { background: #ecfdf5; border-color: #34d399; }
+.summary-box.blue { background: #eff6ff; border-color: #3b82f6; }
+.summary-box.purple { background: #f5f3ff; border-color: #8b5cf6; }
+.summary-box.gray { background: #f9fafb; border-color: #9ca3af; }
+.summary-box .ok { color: #16a34a; }
+.summary-box .bad { color: #dc2626; }
+.app.dark .summary-box {
+  background: #1e293b;
+}
+
+/* Insights */
+.insight {
+  padding: 1rem;
+  border-left: 4px solid;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.insight.yellow { background: #fefce8; border-color: #facc15; }
+.insight.blue { background: #eff6ff; border-color: #3b82f6; }
+.insight.green { background: #ecfdf5; border-color: #34d399; }
+.insight.red { background: #fef2f2; border-color: #ef4444; }
+.app.dark .insight {
+  background: #1e293b;
+}
+
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 1.5rem;
+  width: 2.75rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  border: 1px solid #cbd5e1; /* light border in light mode */
+}
+
+.toggle-circle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.toggle.active {
+  background: #4b5563;
+  border: 1px solid #94a3b8; /* outline in dark mode */
+  box-shadow: 0 0 4px rgba(148, 163, 184, 0.6); /* subtle glow */
+}
+
+.toggle.active .toggle-circle {
+  transform: translateX(1.25rem);
+}
+
+/* Light mode (default) */
+.app.light {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+  color: #111;
+}
+
+/* Dark mode */
+.app.dark {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #f1f5f9;
+}
+
+/* Card styles */
+.app.light .card {
+  background: white;
+  color: #111;
+}
+
+.app.dark .card {
+  background: #1f2937; /* dark gray */
+  color: #f1f5f9;
+  border: 1px solid #334155;
+}
+
+/* Input fields */
+.app.light input {
+  background: white;
+  color: #111;
+  border: 1px solid #ccc;
+}
+
+.app.dark input {
+  background: #334155;   /* darker input box */
+  color: #f1f5f9;        /* white text */
+  border: 1px solid #475569;
+}
+
+.app.dark input:focus {
+  border-color: #60a5fa; /* subtle blue when focused */
+  outline: none;
+}
+.remove-btn {
+  background: transparent !important; /* no box */
+  border: none;
+  color: #9ca3af;                     /* muted gray */
+  font-size: 1.25rem;
+  font-weight: bold;
+  line-height: 1;
+  padding: 0 0.25rem;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  color: #ef4444; /* red on hover */
+}
+
+
+/* Buttons */
+.app.light button {
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+}
+
+.app.dark button {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+/* Dark mode toggle */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 1.5rem;
+  width: 2.75rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.toggle-circle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 1rem;
+  width: 1rem;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.toggle.active {
+  background: #4b5563;
+}
+
+.toggle.active .toggle-circle {
+  transform: translateX(1.25rem);
+}
