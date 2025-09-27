@@ -18,7 +18,10 @@ const FinanceApp = () => {
   const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + val, 0);
   const remaining = monthlyIncome - totalExpenses - savingsInvesting;
   const nonRecurringBudget = 800;
-  // Data for visualization
+
+
+  // Data for visualization - show remaining as 0 if negative
+       
   const pieData = [
     { name: 'Rent', value: expenses.rent, color: '#FF6B6B', percentage: ((expenses.rent / monthlyIncome) * 100).toFixed(1) },
     { name: 'Food', value: expenses.food, color: '#4ECDC4', percentage: ((expenses.food / monthlyIncome) * 100).toFixed(1) },
